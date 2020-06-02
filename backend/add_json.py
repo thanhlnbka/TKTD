@@ -21,7 +21,7 @@ solr = pysolr.Solr("http://localhost:8983/solr/TKTDNhom10/",timeout=1000)
 #     'fq':["topic:(THah OR anasd)","author:(*)"] 
 
 #     })
-results = solr.search({'title_decription_content: Hồ_Chí_Minh'},**{
+results = solr.search({'title_decription_content: "Sơn Tùng"'},**{
 'start': 0, 'rows': 1, 
 'fl': '*', 
 'fq': ['topic: ( * )', 'author: ( * )'],
@@ -33,7 +33,7 @@ results = solr.search({'title_decription_content: Hồ_Chí_Minh'},**{
 'hl.usePhraseHighlighter':'false',
 'hl.fragsize':100,
 'defType':'dismax',
-'qf':'topic title content decription title_decription_content',
+'qf':'topic title content decription title_decription_content'
  }
     )
 
@@ -45,18 +45,10 @@ print("Saw {0} result(s).".format(len(results)))
 new_arr = []
 for result in results:
     result.pop("title_decription_content")
-    print(result)
+    # print(result)
     dict2 = results.highlighting[result["id"]]
-    print("---------------------")
     print(dict2)
-    # for k,v in result.items():
-    #     if k == "title" or k == "decription" or k =="content":
-    #         v1 = dict2[k][0].replace('<mark style="background-color:#ffff0070;">','')
-    #         v1 = v1.replace('</mark>','')
-    #         for i, iv in enumerate(v):
-    #             if iv.find(v1) != -1:
-    #                 v[i] = str(v[i]).replace(iv,dict2[k][0])
-    print(result)
+
     
     pass
     
@@ -69,4 +61,4 @@ for result in results:
 #         v1 = v1.replace('</mark>','')
 #         for i, iv in enumerate(v):
 #             if iv.find(v1) != -1:
-#                 v[i] = str(v[i]).replace(iv,dict2[k][0])
+#                 v[i] = str(v[i]).replace(iv,dict2[k][0]

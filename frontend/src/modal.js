@@ -7,6 +7,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import IconButton from '@material-ui/core/IconButton';
 import InfoIcon from '@material-ui/icons/Info';
+import Highlighter from "react-highlight-words";
 
 class AlertDialog extends React.Component {
   // const [open, setOpen] = React.useState(false);
@@ -39,7 +40,8 @@ class AlertDialog extends React.Component {
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
         >
-          <DialogTitle id="alert-dialog-title">{this.props.title}</DialogTitle>
+          <DialogTitle id="alert-dialog-title">
+            {this.props.title}</DialogTitle>
           <DialogContent>
             <DialogContentText id="alert-dialog-description">
               {this.props.content}....

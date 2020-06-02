@@ -18,6 +18,8 @@ import AlertDialog from './modal';
 import '@material/mwc-linear-progress';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
+import Highlighter from "react-highlight-words";
+
 
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
@@ -62,6 +64,7 @@ class CheckboxesTags extends React.Component{
         loading : false,
         find: false,
         show_score: false,
+        show_highlight: false,
 
     }
   }
@@ -81,6 +84,11 @@ class CheckboxesTags extends React.Component{
     console.log(e.target.checked)
     this.setState({
       show_score: e.target.checked
+    })
+  }
+  handleChangeHighLight = e =>{
+    this.setState({
+      show_highlight: e.target.checked
     })
   }
 
@@ -107,7 +115,7 @@ class CheckboxesTags extends React.Component{
           find: true,
           titleData: [ ... this.state.titleData,... res.data]
         })
-        console.log(res.data)
+        console.log(res.data.tag)
         
         
 
@@ -118,6 +126,8 @@ class CheckboxesTags extends React.Component{
   
   render(){
     const classes = {useStyles};
+
+
     return(
 
       <React.Fragment>
@@ -203,6 +213,11 @@ class CheckboxesTags extends React.Component{
           }
           label="show score"
         />
+
+      <FormControlLabel
+              control={<Switch checked={this.state.show_highlight} onChange={this.handleChangeHighLight} name="show_highlight" />}
+              label="show highlight"
+            />
     {/* </div> */}
         {/* <div className={classes.root}> */}
           <GridList cellHeight={200} className={classes.gridList}>
@@ -215,13 +230,24 @@ class CheckboxesTags extends React.Component{
               <GridListTile key={tile.topic} cols={1/2}>
                 <img src={tile.link_img} alt={tile.title} />
                 <GridListTileBar
-                  title={tile.title[0]}
+                  title={tile.title}
                   subtitle={<span>By: {tile.author} <br/> 
-                                  Date time:{tile.post_time[0]} <br/>
+                                  Date time:{tile.post_time} <br/>
+                                  {this.state.show_score && <span>Score: {tile.score}</span>}
                                   </span>
                         }
                   actionIcon={
-                    <AlertDialog title = {tile.title[0]} content = {tile.content.map((t)=>(<p>{t}</p>))} link_post ={tile.link_post}/>
+                    <AlertDialog 
+                    title = {tile.title} 
+                    content = {tile.content.map((t)=>(
+                                              <p><Highlighter
+                                                  highlightClassName="YourHighlightClass"
+                                                  searchWords={ this.state.show_highlight ? tile.tag: []}
+                                                  autoEscape={true}
+                                                  textToHighlight={t}
+                                                /></p>))} 
+                    link_post ={tile.link_post}
+                    />
                   }
                 />
               </GridListTile>

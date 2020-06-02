@@ -1,6 +1,7 @@
 import spacy 
 import json
 import pysolr
+from bs4 import BeautifulSoup
 
 class Pretreatment:
     
@@ -87,31 +88,69 @@ class Query(Pretreatment):
     def create_query(self):
         [topic,title_decription_content,author] = self.export_queryset(self.request_dict)
         fl = '* score' if self.show_score is True else '*'
-        fq = ["{}".format(topic),"{}".format(author)]
+        fq = ["{0}".format(topic),"{}".format(author)]
         q = {"{}".format(title_decription_content)}
-        query = {"start": self.start, "rows": self.rows,"fl": fl,"fq":fq}
-        # 'hl': 'true',
-        # 'hl.method':'original',
-        # 'hl.simple.pre':'<mark style="background-color:#ffff0070;">',
-        # 'hl.simple.post':'</mark>',
-        # 'hl.highlightMultiTerm':'true',
-        # 'hl.fragsize':100,
-        # 'defType':'dismax',
-        # 'qf':'topic title content decription ',
-        # 'hl.fl':'*'}
+#         print(q)
+        if list(q)[0].count("*") != 1:
+            query = {"start": self.start, "rows": self.rows,"fl": fl,"fq":fq,
+                    'hl': 'true',
+                    'hl.method':'original',
+                    'hl.simple.pre':'<mark>',
+                    'hl.simple.post':'</mark>',
+                    'hl.highlightMultiTerm':'true',
+                    'hl.usePhraseHighlighter':'false',
+                    'hl.fragsize':100,
+                    'defType':'dismax',
+                    'qf':'topic title content decription ',
+                    'hl.fl':'*'}
+        else:
+            query = {"start":self.start,"rows":self.rows,"fl":fl,"fq":fq}
         return [set(q),query]
+    
+    def make_acopy(self, arr):
+        pass
     
     def get_results(self):
         q_k = self.create_query()
         arr_results = []
+        tag = []
         results = self.solr.search( q=q_k[0],**q_k[1])
-        for i in results:
-            i["topic"] = i["topic"][0].replace("_"," ")
-            i["title"] = [k.replace("_"," ") for k in i["title"]]
-            i["decription"] = [k.replace("_"," ") for k in i["decription"]]
-            i["content"] = [k.replace("_"," ") for k in i["content"]]
-            i["author"] = i["author"][0].replace("_"," ")
-            i.pop("title_decription_content")
-#             {"topic":i["topic"],"title":i["title"],"description":i["decription"],"content":i["content"]}
-            arr_results.append(i)
-        return arr_results
+        key_query = [k for k in q_k[1].keys()]
+        if "hl" in key_query:
+            for i in results:
+                dict2 = results.highlighting[i["id"]]
+#                 key_dict2 = [k for k in dict2.keys()]
+#                 print(dict2)
+                for k, v in dict2.items():
+                    # print(v)
+                    for m in v:
+                        soup = BeautifulSoup(m)
+                        tag.append(str(soup.find("mark").getText()).replace("_"," "))
+                tag1 = list(set(tag))
+                i.pop("title_decription_content")
+                i["topic"] = i["topic"][0].replace("_"," ")
+                i["title"] = [k.replace("_"," ") for k in i["title"]]
+                i["decription"] = [k.replace("_"," ") for k in i["decription"]]
+                i["content"] = [k.replace("_"," ") for k in i["content"]]
+                i["author"] = i["author"][0].replace("_"," ")
+                i.update({"tag":tag1})
+                print(tag1)
+                arr_results.append(i)
+            return arr_results
+           
+                
+        else:
+            for i in results:
+                i.pop("title_decription_content")
+                i["topic"] = i["topic"][0].replace("_"," ")
+                i["title"] = [k.replace("_"," ") for k in i["title"]]
+                i["decription"] = [k.replace("_"," ") for k in i["decription"]]
+                i["content"] = [k.replace("_"," ") for k in i["content"]]
+                i["author"] = i["author"][0].replace("_"," ")
+                i.update({"tag":tag})
+                arr_results.append(i)
+                
+            
+            return arr_results
+        
+            
