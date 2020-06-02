@@ -33,6 +33,11 @@ const topAuthor = [{author: 'An Hồng'}, {author: 'Anh Minh'}, {author: 'Anh Ng
 
 
 const useStyles = makeStyles((theme) => ({
+  '@global': {
+    body: {
+      backgroundColor: theme.palette.common.white,
+    },
+  },
   root: {
     display: 'flex',
     flexWrap: 'wrap',
