@@ -1,0 +1,7 @@
+flask==1.1.2
+flask-cors==3.0.8
+python-dotenv==0.13.0
+beautifulsoup4==4.9.1
+pysolr==3.9.0
+pyvi==0.1
+arrow==0.15.6

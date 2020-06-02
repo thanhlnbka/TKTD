@@ -3,6 +3,7 @@ import json
 import pysolr
 from bs4 import BeautifulSoup
 
+
 class Pretreatment:
     
     special_characters = ['/','+','?','#','%','$','~','^','&','[',']','{','}',':',';','!',"-",'\\','\n']
