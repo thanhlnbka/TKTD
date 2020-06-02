@@ -1,4 +1,5 @@
-# TKTD
+# Tìm kiếm và trình diễn thông tin
+
 ## Install package
 git clone https://github.com/thanhlnbka/TKTD.git <br/>
 cd ./TKTD<br/>
