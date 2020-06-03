@@ -5,7 +5,7 @@ import json
 solr = pysolr.Solr("http://localhost:8983/solr/TKTDNhom10/",timeout=1000)
 import spacy
 nlp = spacy.load("vi_spacy_model")
-a = nlp("Tổng thống Mỹ")
+a = nlp("Nhóm nhạc Hàn Quốc")
 
 
 #danh chi muc
@@ -24,19 +24,19 @@ a = nlp("Tổng thống Mỹ")
 #     'fq':["topic:(THah OR anasd)","author:(*)"] 
 
 #     })
-results = solr.search({'title_decription_content:  "{}"'.format(a)},**{
-'start': 0, 'rows': 1000, 
+results = solr.search({'title_decription_content: {} '.format(a)},**{
+'start': 0, 'rows': 10, 
 'fl': '*', 
-'fq': ['topic: ( * )', 'author: ( * )'],
+'fq': ['topic: ( * )', 'author:  ( * )'],
 'hl': 'true',
 'hl.method':'original',
 'hl.simple.pre':'<mark>',
 'hl.simple.post':'</mark>',
 'hl.highlightMultiTerm':'true',
-'hl.usePhraseHighlighter':'false',
-'hl.fragsize':100,
+# 'hl.usePhraseHighlighter':'false',
+'hl.fragsize':10,
 'defType':'dismax',
-'qf':'topic title content decription title_decription_content'
+'qf':'topic author title_decription_content'
  }
     )
 
@@ -48,8 +48,8 @@ results = solr.search({'title_decription_content:  "{}"'.format(a)},**{
 new_arr = []
 for result in results:
     result.pop("title_decription_content")
-    print(result["title"])
-    # print(result["content"])
+    # print(result["title_decription_content"])
+    print(result["content"])
     dict2 = results.highlighting[result["id"]]
     print(dict2)
     print("---"*20)

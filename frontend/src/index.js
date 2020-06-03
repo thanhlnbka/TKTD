@@ -6,8 +6,21 @@ import ParticlesBg from "particles-bg";
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
+  // | "color"
+  // | "ball"
+  // | "lines"
+  // | "thick"
+  // | "circle"
+  // | "cobweb"
+  // | "polygon"
+  // | "square"
+  // | "tadpole"
+  // | "fountain"
+  // | "random"
+  // | "list"
+  // | "custom";
   <React.StrictMode>
-    <ParticlesBg type="cobweb" bg={true} color = ""/>
+    <ParticlesBg type="square" bg={true} color = ""/>
     <CheckboxesTags/>
   </React.StrictMode>,
   document.getElementById('root')

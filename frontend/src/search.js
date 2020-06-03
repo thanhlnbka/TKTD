@@ -19,7 +19,9 @@ import '@material/mwc-linear-progress';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import Highlighter from "react-highlight-words";
-
+import InputLabel from '@material-ui/core/InputLabel';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
 
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
@@ -52,6 +54,13 @@ const useStyles = makeStyles((theme) => ({
   icon: {
     color: 'rgba(255, 255, 255, 0.54)',
   },
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+  },
+  selectEmpty: {
+    marginTop: theme.spacing(2),
+  }
 }));
 
 
@@ -70,6 +79,7 @@ class CheckboxesTags extends React.Component{
         find: false,
         show_score: false,
         show_highlight: false,
+        type_search: "full text search",
 
     }
   }
@@ -85,7 +95,16 @@ class CheckboxesTags extends React.Component{
     })
   }
 
-  handleChange = e =>{
+  handleChangeTypeSearch = e => {
+
+    console.log(e.target.value)
+    this.setState({
+      type_search: e.target.value
+    })
+    
+  }
+
+  handleChangeScore = e =>{
     console.log(e.target.checked)
     this.setState({
       show_score: e.target.checked
@@ -112,7 +131,8 @@ class CheckboxesTags extends React.Component{
     {
       topic: this.state.topic,
       title_decription_content: this.state.title_description_content,
-      author: this.state.author
+      author: this.state.author,
+      type_search: this.state.type_search
     }, config).then(
        (res) => {
         this.setState({
@@ -166,6 +186,7 @@ class CheckboxesTags extends React.Component{
               <TextField {...params} variant="outlined" label="Topics" placeholder="Topic Favorites"  />
             )}
           />
+          
         </Grid>
         <Grid item xs={12} sm={6}>
           <Autocomplete
@@ -194,6 +215,24 @@ class CheckboxesTags extends React.Component{
             )}
           />
         </Grid>
+        <Grid item  xs ={12}>
+        <FormControl className={classes.formControl}>
+          <InputLabel htmlFor="age-native-simple">TYPE SEARCH</InputLabel>
+          <Select
+            native
+            value={this.state.type_search}
+            onChange={this.handleChangeTypeSearch}
+            // inputProps={{
+            //   name: 'age',
+            //   id: 'age-native-simple',
+            // }}
+          >
+            <option value={"full text search"}>full text search</option>
+            <option value={"keywords"}>keywords</option>
+          </Select>
+        </FormControl>
+        </Grid>
+        
         <Grid item xs={12}>
           <SearchBar
             value ={this.state.title_description_content}
@@ -211,7 +250,7 @@ class CheckboxesTags extends React.Component{
           control={
             <Switch
               checked={this.state.show_score}
-              onChange={this.handleChange}
+              onChange={this.handleChangeScore}
               name="show_score"
               color="primary"
             />

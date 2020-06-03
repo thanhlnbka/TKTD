@@ -27,7 +27,7 @@ def get_results():
     str_a = request.data.decode("utf-8")
     dict = json.loads(str_a)
     print(dict)
-    rq = Query(lan="vi",show_score= True ,start=0,rows=40,request_dict=dict,connect_solr=path)
+    rq = Query(lan="vi",show_score= True ,start=0,rows=20,request_dict=dict,connect_solr=path)
     arr_results = rq.get_results()
     # print(arr_results)
     return jsonify(arr_results)
