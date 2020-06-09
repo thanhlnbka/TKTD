@@ -20,7 +20,7 @@ ReactDOM.render(
   // | "list"
   // | "custom";
   <React.StrictMode>
-    <ParticlesBg type="square" bg={true} color = ""/>
+    <ParticlesBg type="polygon" bg={true} color = ""/>
     <CheckboxesTags/>
   </React.StrictMode>,
   document.getElementById('root')

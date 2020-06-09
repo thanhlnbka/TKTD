@@ -22,7 +22,12 @@ import Highlighter from "react-highlight-words";
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-
+import 'date-fns';
+import {
+  MuiPickersUtilsProvider,
+  KeyboardDatePicker,
+} from '@material-ui/pickers';
+import DateFnsUtils from '@date-io/date-fns';
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />; 
@@ -55,8 +60,8 @@ const useStyles = makeStyles((theme) => ({
     color: 'rgba(255, 255, 255, 0.54)',
   },
   formControl: {
-    margin: theme.spacing(1),
-    minWidth: 120,
+    margin: theme.spacing(2),
+    minWidth: 200
   },
   selectEmpty: {
     marginTop: theme.spacing(2),
@@ -80,8 +85,25 @@ class CheckboxesTags extends React.Component{
         show_score: false,
         show_highlight: false,
         type_search: "full text search",
+        startDate: null,
+        endDate: null
 
     }
+  }
+
+  handleStartDate = e =>{
+    var date = new Date(Date.parse(e))
+    console.log(date)
+    
+  
+    this.setState({
+      startDate: e
+    })
+  }
+  handleEndDate = e => {
+    this.setState({
+      endDate: e
+    })
   }
   
   onChangeTopic = (e,topic)=>{
@@ -127,12 +149,13 @@ class CheckboxesTags extends React.Component{
       'title-Type': 'application/json',
       'Access-Control-Allow-Origin': '*'}
                   }
-    axios.post("http://localhost:8892/api",
+    axios.post("http://localhost:9090/api",
     {
       topic: this.state.topic,
       title_decription_content: this.state.title_description_content,
       author: this.state.author,
-      type_search: this.state.type_search
+      type_search: this.state.type_search,
+      date:[this.state.startDate,this.state.endDate]
     }, config).then(
        (res) => {
         this.setState({
@@ -156,9 +179,8 @@ class CheckboxesTags extends React.Component{
     return(
 
       <React.Fragment>
-      <CssBaseline />
+      
       <Container fixed>
-      {/* <div className={classes.root}> */}
       <Grid container spacing={3}>
         <Grid item xs={12} sm={6}>
           <Autocomplete
@@ -188,7 +210,7 @@ class CheckboxesTags extends React.Component{
           />
           
         </Grid>
-        <Grid item xs={12} sm={6}>
+      <Grid item xs={12} sm={6}>
           <Autocomplete
             onChange = {this.onChangeAuthor}
             multiple
@@ -215,24 +237,46 @@ class CheckboxesTags extends React.Component{
             )}
           />
         </Grid>
-        <Grid item  xs ={12}>
-        <FormControl className={classes.formControl}>
-          <InputLabel htmlFor="age-native-simple">TYPE SEARCH</InputLabel>
-          <Select
-            native
-            value={this.state.type_search}
-            onChange={this.handleChangeTypeSearch}
-            // inputProps={{
-            //   name: 'age',
-            //   id: 'age-native-simple',
-            // }}
-          >
-            <option value={"full text search"}>full text search</option>
-            <option value={"keywords"}>keywords</option>
-          </Select>
-        </FormControl>
+        <Grid item  xs = {6} >
+            <FormControl className={classes.formControl}>
+                <InputLabel htmlFor="age-native-simple">TYPE SEARCH</InputLabel>
+                <Select
+                  native
+                  value={this.state.type_search}
+                  onChange={this.handleChangeTypeSearch}
+                >
+                  <option value={"full text search"}>Full text search</option>
+                  <option value={"keywords"}>Keywords</option>
+                </Select>
+              </FormControl>
+  
         </Grid>
-        
+        <Grid item xs = {6} >
+            
+            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+            <Grid container justify="space-around">
+                <KeyboardDatePicker
+                  margin="normal"
+                  id="date-picker-dialog"
+                  label="Start Date"
+                  format="dd/MM/yyyy"
+                  value={this.state.startDate}
+                  onChange={this.handleStartDate}
+                />
+                <KeyboardDatePicker
+                  margin="normal"
+                  id="date-picker-dialog"
+                  label="End Date"
+                  format="dd/MM/yyyy"
+                  value={this.state.endDate}
+                  onChange={this.handleEndDate}
+                />
+
+            </Grid>
+              </MuiPickersUtilsProvider>
+              
+        </Grid>
+
         <Grid item xs={12}>
           <SearchBar
             value ={this.state.title_description_content}
@@ -262,8 +306,6 @@ class CheckboxesTags extends React.Component{
               control={<Switch checked={this.state.show_highlight} onChange={this.handleChangeHighLight} name="show_highlight" />}
               label="show highlight"
             />
-    {/* </div> */}
-        {/* <div className={classes.root}> */}
           <GridList cellHeight={200} className={classes.gridList}>
             <GridListTile key="Subheader" cols={2} rows={1} style={{ height: 80 }}>
              {this.state.find && <ListSubheader component="div" >RESULT SEARCH</ListSubheader>} 
@@ -297,7 +339,6 @@ class CheckboxesTags extends React.Component{
               </GridListTile>
             ))}
           </GridList>
-        {/* </div> */}
       </Container>
     </React.Fragment>
     

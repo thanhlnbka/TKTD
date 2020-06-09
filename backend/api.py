@@ -18,7 +18,7 @@ app.config.from_object(__name__)
 CORS(app, resources={r'/*': {'origins': '*'}})
 
 #connect Solr
-path = "http://localhost:8983/solr/TKTDNhom10/"
+path = "http://localhost:8983/solr/TestConfig/"
 
 # sanity check route
 
