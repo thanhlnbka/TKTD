@@ -29,6 +29,13 @@ import {
 } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 
+// import SearchAvanced from './search_advanced';
+
+// import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
+import Slider from '@material-ui/core/Slider';
+
+
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />; 
 // Cac chu de tim kiem
@@ -86,7 +93,14 @@ class CheckboxesTags extends React.Component{
         show_highlight: false,
         type_search: "full text search",
         startDate: null,
-        endDate: null
+        endDate: null,
+        valueTitle: 0,
+        valueDescription: 0,
+        valueContent: 0,
+        valueAuthor: 0,
+        isVisual: false,
+        search: "STANDARD",
+        time_query: null
 
     }
   }
@@ -126,6 +140,26 @@ class CheckboxesTags extends React.Component{
     
   }
 
+  handleChangeSearch = e =>{
+    this.setState({
+      search: e.target.value,
+      // isVisual:false
+    })
+    // standard
+    if (e.target.value === "STANDARD"){
+      // console.log("BASIC")
+      this.setState({
+        isVisual: false
+      })
+    }else{
+      this.setState({
+        isVisual:true
+      })
+      // console.log(e.target.value)
+    }
+  
+  }
+
   handleChangeScore = e =>{
     console.log(e.target.checked)
     this.setState({
@@ -155,15 +189,20 @@ class CheckboxesTags extends React.Component{
       title_decription_content: this.state.title_description_content,
       author: this.state.author,
       type_search: this.state.type_search,
-      date:[this.state.startDate,this.state.endDate]
+      date:[this.state.startDate,this.state.endDate],
+      search: this.state.search,
+      value: {"valueTitle": this.state.valueTitle,"valueDecription":this.state.valueDescription,"valueContent":this.state.valueContent,"valueAuthor":this.state.valueAuthor}
+
     }, config).then(
        (res) => {
+        console.log(res.data)
         this.setState({
           loading: false,
           find: true,
-          titleData: [ ... this.state.titleData,... res.data]
+          titleData: [ ... this.state.titleData,... res.data["arr_results"]],
+          time_query: res.data["time"]
         })
-        console.log(res.data.tag)
+        
         
         
 
@@ -171,6 +210,32 @@ class CheckboxesTags extends React.Component{
     )
 
   }
+
+  // Ham xu ly lay state trong Search_Advanced
+    handleChangeTitle = (e,value)=> {
+        this.setState({
+            valueTitle: value
+        })
+        console.log("Title",value)
+    }
+    handleChangeDescription = (e,value) => {
+        this.setState({
+            valueDescription: value
+        })
+        console.log("Description",value)
+    }
+    handleChangeContent = (e,value) => {
+        this.setState({
+            valueContent: value
+        })
+        console.log("Content",value)
+    }
+    handleChangeAuthor = (e,value) => {
+        this.setState({
+            valueAuthor: value
+        })
+        console.log("Author",value)
+    }
   
   render(){
     const classes = {useStyles};
@@ -181,101 +246,195 @@ class CheckboxesTags extends React.Component{
       <React.Fragment>
       
       <Container fixed>
-      <Grid container spacing={3}>
-        <Grid item xs={12} sm={6}>
-          <Autocomplete
-            onChange = {this.onChangeTopic}
-            multiple
-            options={topTopic}
-            disableCloseOnSelect
-            getOptionLabel={(option) => option.topic}
-            renderOption={(option, { selected }) => (
 
-              <React.Fragment>
-                <Checkbox
-                  icon={icon}
-                  checkedIcon={checkedIcon}
-                  style={{ marginRight: 8 }}
-                  checked={selected}
-                />
-                {option.topic}
-              </React.Fragment>
-
-            )}
-            // style={{ width: 500, height:20 }}
-            style ={{marginTop:20}}
-            renderInput={(params) => (
-              <TextField {...params} variant="outlined" label="Topics" placeholder="Topic Favorites"  />
-            )}
-          />
-          
+        {/* <div>Search Avanced OR Search Basic</div> */}
+        <Grid xs = {6}>
+        <FormControl className={classes.formControl}>
+          <InputLabel htmlFor="age-native-simple">SEARCH </InputLabel>
+          <Select
+            native
+            value={this.state.search}
+            onChange={this.handleChangeSearch}
+          >
+            {/* standard */}
+            <option value={"STANDARD"} >STANDARD</option>
+            <option value={"DISMAX"} >DISMAX</option>
+          </Select>
+        </FormControl>
         </Grid>
-      <Grid item xs={12} sm={6}>
-          <Autocomplete
-            onChange = {this.onChangeAuthor}
-            multiple
-            options={topAuthor}
-            disableCloseOnSelect
-            getOptionLabel={(option) => option.author}
-            renderOption={(option, { selected }) => (
 
-              <React.Fragment>
-                <Checkbox
-                  icon={icon}
-                  checkedIcon={checkedIcon}
-                  style={{ marginRight: 8 }}
-                  checked={selected}
-                />
-                {option.author}
-              </React.Fragment>
+        
 
-            )}
-            // style={{ width: 500, height:70 }}
-            style ={{marginTop:20}}
-            renderInput={(params) => (
-              <TextField {...params} variant="outlined" label="Top authors more than 1000 posts" placeholder="Author Favorites"  />
-            )}
-          />
-        </Grid>
-        <Grid item  xs = {6} >
-            <FormControl className={classes.formControl}>
-                <InputLabel htmlFor="age-native-simple">TYPE SEARCH</InputLabel>
-                <Select
-                  native
-                  value={this.state.type_search}
-                  onChange={this.handleChangeTypeSearch}
-                >
-                  <option value={"full text search"}>Full text search</option>
-                  <option value={"keywords"}>Keywords</option>
-                </Select>
-              </FormControl>
-  
-        </Grid>
-        <Grid item xs = {6} >
-            
-            <MuiPickersUtilsProvider utils={DateFnsUtils}>
-            <Grid container justify="space-around">
-                <KeyboardDatePicker
-                  margin="normal"
-                  id="date-picker-dialog"
-                  label="Start Date"
-                  format="dd/MM/yyyy"
-                  value={this.state.startDate}
-                  onChange={this.handleStartDate}
-                />
-                <KeyboardDatePicker
-                  margin="normal"
-                  id="date-picker-dialog"
-                  label="End Date"
-                  format="dd/MM/yyyy"
-                  value={this.state.endDate}
-                  onChange={this.handleEndDate}
-                />
 
-            </Grid>
-              </MuiPickersUtilsProvider>
-              
-        </Grid>
+        {/* -----------------------Search Avanced ------------------------ */}
+        {this.state.isVisual && <Grid container spacing={3}>
+                                <Grid item xs={3}>
+                                    <Typography id="discrete-slider" gutterBottom>
+                                            Title
+                                        </Typography>
+                                        <Slider
+                                            defaultValue={0}
+                                            value = {this.state.valueTitle}
+                                            aria-labelledby="discrete-slider"
+                                            valueLabelDisplay="auto"
+                                            step={1}
+                                            marks
+                                            min={0}
+                                            max={10}
+                                            onChange = {this.handleChangeTitle}
+                                        />
+                                  </Grid>
+                                  <Grid item xs={3}>
+                                  <Typography id="discrete-slider" gutterBottom>
+                                            Description
+                                        </Typography>
+                                        <Slider
+                                            defaultValue={0}
+                                            value = {this.state.valueDescription}
+                                            aria-labelledby="discrete-slider"
+                                            valueLabelDisplay="auto"
+                                            step={1}
+                                            marks
+                                            min={0}
+                                            max={10}
+                                            onChange = {this.handleChangeDescription}
+                                        />
+                                  </Grid>
+                                  <Grid item xs={3}>
+                                  <Typography id="discrete-slider" gutterBottom>
+                                            Content
+                                        </Typography>
+                                        <Slider
+                                            defaultValue={0}
+                                            value = {this.state.valueContent}
+                                            aria-labelledby="discrete-slider"
+                                            valueLabelDisplay="auto"
+                                            step={1}
+                                            marks
+                                            min={0}
+                                            max={10}
+                                            onChange = {this.handleChangeContent}
+                                        />
+                                  </Grid>
+                                  <Grid item xs={3}>
+                                  <Typography id="discrete-slider" gutterBottom>
+                                            Author
+                                        </Typography>
+                                        <Slider
+                                            defaultValue={0}
+                                            value = {this.state.valueAuthor}
+                                            aria-labelledby="discrete-slider"
+                                            valueLabelDisplay="auto"
+                                            step={1}
+                                            marks
+                                            min={0}
+                                            max={10}
+                                            onChange = {this.handleChangeAuthor}
+                                        />
+                                  </Grid>
+                                </Grid>}
+
+
+        {/* <SearchAvanced/> */}
+        {/* ---------------------------------------------------------------- */}
+        {/*------------------------  Search Basic ------------------------- */}
+      { !this.state.isVisual && <Grid container spacing={3}>
+                      <Grid item xs={12} sm={6}>
+                        <Autocomplete
+                          onChange = {this.onChangeTopic}
+                          multiple
+                          options={topTopic}
+                          disableCloseOnSelect
+                          getOptionLabel={(option) => option.topic}
+                          renderOption={(option, { selected }) => (
+
+                            <React.Fragment>
+                              <Checkbox
+                                icon={icon}
+                                checkedIcon={checkedIcon}
+                                style={{ marginRight: 8 }}
+                                checked={selected}
+                              />
+                              {option.topic}
+                            </React.Fragment>
+
+                          )}
+                          // style={{ width: 500, height:20 }}
+                          style ={{marginTop:20}}
+                          renderInput={(params) => (
+                            <TextField {...params} variant="outlined" label="Topics" placeholder="Topic Favorites"  />
+                          )}
+                        />
+                        
+                      </Grid>
+                    <Grid item xs={12} sm={6}>
+                        <Autocomplete
+                          onChange = {this.onChangeAuthor}
+                          multiple
+                          options={topAuthor}
+                          disableCloseOnSelect
+                          getOptionLabel={(option) => option.author}
+                          renderOption={(option, { selected }) => (
+
+                            <React.Fragment>
+                              <Checkbox
+                                icon={icon}
+                                checkedIcon={checkedIcon}
+                                style={{ marginRight: 8 }}
+                                checked={selected}
+                              />
+                              {option.author}
+                            </React.Fragment>
+
+                          )}
+                          // style={{ width: 500, height:70 }}
+                          style ={{marginTop:20}}
+                          renderInput={(params) => (
+                            <TextField {...params} variant="outlined" label="Top authors more than 1000 posts" placeholder="Author Favorites"  />
+                          )}
+                        />
+                      </Grid>
+                      <Grid item  xs = {6} >
+                          <FormControl className={classes.formControl}>
+                              <InputLabel htmlFor="age-native-simple">TYPE SEARCH</InputLabel>
+                              <Select
+                                native
+                                value={this.state.type_search}
+                                onChange={this.handleChangeTypeSearch}
+                              >
+                                <option value={"full text search"}>Full text search</option>
+                                <option value={"keywords"}>Keywords</option>
+                              </Select>
+                            </FormControl>
+                
+                      </Grid>
+                    <Grid item xs = {6} >
+                        
+                        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                        <Grid container justify="space-around">
+                            <KeyboardDatePicker
+                              margin="normal"
+                              id="date-picker-dialog"
+                              label="Start Date"
+                              format="dd/MM/yyyy"
+                              value={this.state.startDate}
+                              onChange={this.handleStartDate}
+                            />
+                            <KeyboardDatePicker
+                              margin="normal"
+                              id="date-picker-dialog"
+                              label="End Date"
+                              format="dd/MM/yyyy"
+                              value={this.state.endDate}
+                              onChange={this.handleEndDate}
+                            />
+
+                        </Grid>
+                          </MuiPickersUtilsProvider>
+                          
+                    </Grid>
+                    </Grid>}
+        {/* --------------------------------------------------------- */}
 
         <Grid item xs={12}>
           <SearchBar
@@ -289,7 +448,7 @@ class CheckboxesTags extends React.Component{
           />
         </Grid>
         
-      </Grid>
+      {/* </Grid> */}
         <FormControlLabel
           control={
             <Switch
@@ -311,6 +470,7 @@ class CheckboxesTags extends React.Component{
              {this.state.find && <ListSubheader component="div" >RESULT SEARCH</ListSubheader>} 
             
              {this.state.loading && <mwc-linear-progress indeterminate></mwc-linear-progress>}
+             {!this.state.loading && <div>{this.state.time_query}</div>}
             </GridListTile>
             {this.state.titleData.map((tile) => (
               <GridListTile key={tile.topic} cols={1/2}>
