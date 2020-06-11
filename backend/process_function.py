@@ -40,20 +40,6 @@ class Pretreatment:
             date_qr = "date: [ " + str(arr_date[0])+ " TO " + str(arr_date[1])+ " ]"
 
         return [topic_qr,title_description_content_qr,author_qr,date_qr]
-# Tra ve chuoi dang "Ho_Chi_Minh" AND "Van_Toan" hoac giu nguyen content search neu chuoi co toan tu
-    def get_keywords(self, content ):
-        list_operator = ["AND","OR","NOT","XOR"]
-        count = [content.find(i) for i in list_operator]
-        if max(count) != -1:
-            print("haha")
-            return str(self.nlp(content))
-        else:
-            print("hihi")
-            content = [self.nlp(i) for i in re.findall('\"[^\"]+\"',self.clean_content(content),re.IGNORECASE)]
-            if len(content) == 0:
-                return "_"
-            else:
-                return self.join_string(self.insert_operator(content,"AND"))
 
 
 
@@ -110,10 +96,17 @@ class Query(Pretreatment):
         self.solr = pysolr.Solr(connect_solr, timeout = 1000)
         self.start = start
         self.tag_content = []
+        self.tc = []
         self.search = request_dict["search"]
         list_key = [ k for k in request_dict.keys()]
         if "title_decription_content" in list_key:
-            self.tag_content = [str(str(i.strip('"')).strip(' ')).replace("_"," ") for i in re.findall('\"[^\"]+\"',self.clean_content(str(request_dict["title_decription_content"])),re.IGNORECASE)]
+            tdc  = request_dict["title_decription_content"]
+            clean_tdc = self.clean_content(tdc)
+            # print(clean_tdc)
+            if not clean_tdc.isspace() and len(clean_tdc)!= 0:
+                # print(str(self.nlp(clean_tdc)).split(" "))
+                self.tc = [ w.replace("_"," ") for w in str(self.nlp(clean_tdc)).split(" ")]
+            self.tag_content = [str(str(i.strip('"')).strip(' ')).replace("_"," ") for i in re.findall('\"[^\"]+\"',self.clean_content(str(tdc)),re.IGNORECASE)]
         
     
     
@@ -207,14 +200,12 @@ class Query(Pretreatment):
                         soup = BeautifulSoup(m)
                         tag.append(str(soup.find("mark").getText()).replace("_"," "))
                 tag1 = list(set(tag))
-                tag1.extend(self.tag_content)
-                print(tag1)
-                # if self.type_search == "keywords":
-                #     tag1 = self.tag_content
-                #     # print(tag1)
-                # else:
-                #     tag1.extend(self.tag_content)
-                    # print(tag1)
+                if len(self.tag_content) != 0:
+                    tag1.extend(self.tag_content)
+                tag1.extend(self.tc)
+                # print("tc",self.tc)
+                # print("tag_content",self.tag_content)
+                # print(tag1)
                 i.pop("title_decription_content")
                 i["topic"] = i["topic"][0].replace("_"," ")
                 i["title"] = [k.replace("_"," ") for k in i["title"]]
