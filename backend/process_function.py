@@ -58,7 +58,7 @@ class Pretreatment:
 
 
 
-    def export_queryset(self,request_dict,type_search):
+    def export_queryset(self,request_dict):
         dict = request_dict
         arr_topic = []
         arr_author = []
@@ -69,12 +69,7 @@ class Pretreatment:
         for k,v in dict.items():
             if k == "title_decription_content":
                 if not v.isspace() and len(v) != 0:
-                    if type_search == "full text search":
-                        print("FULL TEXT SEARCH")
-                        title_decription_content = self.clean_content(str(self.nlp(v)))
-                    elif type_search == "keywords":
-                        print("KEYWORDS")
-                        title_decription_content = self.get_keywords(v)
+                    title_decription_content = self.clean_content(str(self.nlp(v)))
 
                 else:
                     title_decription_content = "*"
@@ -97,7 +92,7 @@ class Pretreatment:
                     v[1] = "NOW"
                 arr_date.append(v[0])
                 arr_date.append(v[1])
-                # print(v)
+
                 
         
         if len(arr_topic_inserted) != 2*len(arr_topic)-1 and len(arr_author_inserted) != 2*len(arr_author)-1:
@@ -116,7 +111,6 @@ class Query(Pretreatment):
         self.start = start
         self.tag_content = []
         self.search = request_dict["search"]
-        self.type_search = request_dict["type_search"]
         list_key = [ k for k in request_dict.keys()]
         if "title_decription_content" in list_key:
             self.tag_content = [str(str(i.strip('"')).strip(' ')).replace("_"," ") for i in re.findall('\"[^\"]+\"',self.clean_content(str(request_dict["title_decription_content"])),re.IGNORECASE)]
@@ -126,7 +120,7 @@ class Query(Pretreatment):
     def create_query(self):
         # standard
         if self.search == "STANDARD":
-            [topic,title_decription_content,author,date] = self.export_queryset(self.request_dict,self.type_search)
+            [topic,title_decription_content,author,date] = self.export_queryset(self.request_dict)
             fl = '* score' if self.show_score is True else '*'
             fq = ["{0}".format(topic),"{}".format(author)]      
             q = {"{0} && {1}".format(title_decription_content, date)}
@@ -150,9 +144,9 @@ class Query(Pretreatment):
                 query = {"start":self.start,"rows":self.rows,"fl":fl,"fq":fq}
             return [set(q),query]
         else:
-            [tdc,vT, vD, vC, vA] = self.export_querysetAnvanced(self.request_dict)
+            [tdc,vT, vD, vC, vA, vDate] = self.export_querysetAnvanced(self.request_dict)
             fl = '* score' if self.show_score is True else '*'
-            q = {"{0}".format(tdc)}
+            q = {"{0}  && date:[ {1} TO {2} ] ".format(tdc, vDate[0],vDate[1])}
         
             if tdc.find("*") == -1:
                 query = {"start": self.start, "rows": self.rows,"fl": fl,
@@ -163,7 +157,7 @@ class Query(Pretreatment):
                         'hl.highlightMultiTerm':'false',
                         'hl.usePhraseHighlighter':'false',
                         'hl.fragsize':100,
-                        'defType':'dismax',
+                        'defType':'edismax',
                         'qf':'title^{0} decription^{1} content^{2} author^{3}'.format(vT,vD,vC,vA),
                         'hl.fl':'*'
                         
@@ -171,7 +165,7 @@ class Query(Pretreatment):
                         }
             else:
                 query = {"start":self.start,"rows":self.rows,"fl":fl,
-                        'defType':'dismax',
+                        'defType':'edismax',
                         'qf':'title^{0} decription^{1} content^{2} author^{3}'.format(vT,vD,vC,vA)}
             return [set(q),query]
             pass
@@ -186,7 +180,13 @@ class Query(Pretreatment):
         vD = request_dict["value"]["valueDecription"]
         vC = request_dict["value"]["valueContent"]
         vA = request_dict["value"]["valueAuthor"]
-        return [tdc,vT,vD,vC, vA]
+        rdate = request_dict["date"]
+        if rdate[0] == None:
+            rdate[0] = "*"
+        if rdate[1] == None:
+            rdate[1] = "NOW"
+        # print(rdate)
+        return [tdc,vT,vD,vC, vA, rdate]
 
     
     def get_results(self):
@@ -207,11 +207,13 @@ class Query(Pretreatment):
                         soup = BeautifulSoup(m)
                         tag.append(str(soup.find("mark").getText()).replace("_"," "))
                 tag1 = list(set(tag))
-                if self.type_search == "keywords":
-                    tag1 = self.tag_content
-                    # print(tag1)
-                else:
-                    tag1.extend(self.tag_content)
+                tag1.extend(self.tag_content)
+                print(tag1)
+                # if self.type_search == "keywords":
+                #     tag1 = self.tag_content
+                #     # print(tag1)
+                # else:
+                #     tag1.extend(self.tag_content)
                     # print(tag1)
                 i.pop("title_decription_content")
                 i["topic"] = i["topic"][0].replace("_"," ")
@@ -221,7 +223,7 @@ class Query(Pretreatment):
                 i["author"] = i["author"][0].replace("_"," ")
                 i.update({"tag":tag1})
                 arr_results.append(i)
-            return [arr_results,qery_time]
+            return [arr_results,qery_time,results.hits]
            
                 
         else:
@@ -236,6 +238,6 @@ class Query(Pretreatment):
                 arr_results.append(i)
                 
             
-            return [arr_results,qery_time]
+            return [arr_results,qery_time,results.hits]
         
             

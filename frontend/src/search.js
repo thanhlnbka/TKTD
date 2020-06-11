@@ -91,13 +91,13 @@ class CheckboxesTags extends React.Component{
         find: false,
         show_score: false,
         show_highlight: false,
-        type_search: "full text search",
+        // type_search: "full text search",
         startDate: null,
         endDate: null,
-        valueTitle: 0,
-        valueDescription: 0,
-        valueContent: 0,
-        valueAuthor: 0,
+        valueTitle: 1,
+        valueDescription: 1,
+        valueContent: 1,
+        valueAuthor: 1,
         isVisual: false,
         search: "STANDARD",
         time_query: null
@@ -131,14 +131,14 @@ class CheckboxesTags extends React.Component{
     })
   }
 
-  handleChangeTypeSearch = e => {
+  // handleChangeTypeSearch = e => {
 
-    console.log(e.target.value)
-    this.setState({
-      type_search: e.target.value
-    })
+  //   console.log(e.target.value)
+  //   this.setState({
+  //     type_search: e.target.value
+  //   })
     
-  }
+  // }
 
   handleChangeSearch = e =>{
     this.setState({
@@ -188,7 +188,7 @@ class CheckboxesTags extends React.Component{
       topic: this.state.topic,
       title_decription_content: this.state.title_description_content,
       author: this.state.author,
-      type_search: this.state.type_search,
+      // type_search: this.state.type_search,
       date:[this.state.startDate,this.state.endDate],
       search: this.state.search,
       value: {"valueTitle": this.state.valueTitle,"valueDecription":this.state.valueDescription,"valueContent":this.state.valueContent,"valueAuthor":this.state.valueAuthor}
@@ -258,7 +258,7 @@ class CheckboxesTags extends React.Component{
           >
             {/* standard */}
             <option value={"STANDARD"} >STANDARD</option>
-            <option value={"DISMAX"} >DISMAX</option>
+            <option value={"EDISMAX"} >EDISMAX</option>
           </Select>
         </FormControl>
         </Grid>
@@ -273,7 +273,7 @@ class CheckboxesTags extends React.Component{
                                             Title
                                         </Typography>
                                         <Slider
-                                            defaultValue={0}
+                                            defaultValue={1}
                                             value = {this.state.valueTitle}
                                             aria-labelledby="discrete-slider"
                                             valueLabelDisplay="auto"
@@ -289,7 +289,7 @@ class CheckboxesTags extends React.Component{
                                             Description
                                         </Typography>
                                         <Slider
-                                            defaultValue={0}
+                                            defaultValue={1}
                                             value = {this.state.valueDescription}
                                             aria-labelledby="discrete-slider"
                                             valueLabelDisplay="auto"
@@ -305,7 +305,7 @@ class CheckboxesTags extends React.Component{
                                             Content
                                         </Typography>
                                         <Slider
-                                            defaultValue={0}
+                                            defaultValue={1}
                                             value = {this.state.valueContent}
                                             aria-labelledby="discrete-slider"
                                             valueLabelDisplay="auto"
@@ -321,7 +321,7 @@ class CheckboxesTags extends React.Component{
                                             Author
                                         </Typography>
                                         <Slider
-                                            defaultValue={0}
+                                            defaultValue={1}
                                             value = {this.state.valueAuthor}
                                             aria-labelledby="discrete-slider"
                                             valueLabelDisplay="auto"
@@ -394,7 +394,7 @@ class CheckboxesTags extends React.Component{
                           )}
                         />
                       </Grid>
-                      <Grid item  xs = {6} >
+                      {/* <Grid item  xs = {6} >
                           <FormControl className={classes.formControl}>
                               <InputLabel htmlFor="age-native-simple">TYPE SEARCH</InputLabel>
                               <Select
@@ -407,8 +407,11 @@ class CheckboxesTags extends React.Component{
                               </Select>
                             </FormControl>
                 
-                      </Grid>
-                    <Grid item xs = {6} >
+                      </Grid> */}
+                    
+                    </Grid>}
+        {/* --------------------------------------------------------- */}
+        <Grid item xs = {12} >
                         
                         <MuiPickersUtilsProvider utils={DateFnsUtils}>
                         <Grid container justify="space-around">
@@ -433,9 +436,8 @@ class CheckboxesTags extends React.Component{
                           </MuiPickersUtilsProvider>
                           
                     </Grid>
-                    </Grid>}
-        {/* --------------------------------------------------------- */}
-
+                      <br/>
+                      <br/>
         <Grid item xs={12}>
           <SearchBar
             value ={this.state.title_description_content}
@@ -467,11 +469,13 @@ class CheckboxesTags extends React.Component{
             />
           <GridList cellHeight={200} className={classes.gridList}>
             <GridListTile key="Subheader" cols={2} rows={1} style={{ height: 80 }}>
-             {this.state.find && <ListSubheader component="div" >RESULT SEARCH</ListSubheader>} 
+             {this.state.find && <ListSubheader component="div" >RESULT SEARCH: {this.state.time_query}</ListSubheader>} 
             
              {this.state.loading && <mwc-linear-progress indeterminate></mwc-linear-progress>}
-             {!this.state.loading && <div>{this.state.time_query}</div>}
+             {/* {!this.state.loading && <ListSubheader component="div" ></ListSubheader>} */}
+        
             </GridListTile>
+            <br/>
             {this.state.titleData.map((tile) => (
               <GridListTile key={tile.topic} cols={1/2}>
                 <img src={tile.link_img} alt={tile.title} />
