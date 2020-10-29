@@ -16,3 +16,6 @@ B2: flask run or python -m flask run<br/>
 ### Run client:
 B1: cd ./TKTD/frontend<br/>
 B2: npm start<br/>
+
+### Tạo core collection
+bin/solr create -c <name> -d <path to conf folder>

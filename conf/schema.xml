@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Solr managed schema - automatically generated - DO NOT EDIT -->
+<schema name="default-config" version="1.6">
+  <fieldType name="pdate" class="solr.DatePointField" docValues="true"/>
+  <fieldType name="text_general" class="solr.TextField" multiValued="false" omitNorms="true" indexed="true" stored="true" termVectors="true" termPositions="true">
+    <analyzer type="index">
+      <tokenizer class="solr.StandardTokenizerFactory"/>
+      <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/vi_stopwords.txt" />
+      <filter class="solr.LowerCaseFilterFactory"/>
+    </analyzer>
+    <analyzer type="query">
+      <tokenizer class="solr.StandardTokenizerFactory"/>
+      <filter class="solr.SuggestStopFilterFactory" ignoreCase="true" words="lang/vi_stopwords.txt" />
+      <filter class="solr.LowerCaseFilterFactory"/>
+    </analyzer>
+    <similarity class="solr.BM25SimilarityFactory">
+      <float name="k1">1.2</float>
+      <float name="b">0.75</float>
+    </similarity>
+  </fieldType>
+  <fieldType name="text_general_title" class="solr.TextField" multiValued="false" omitNorms="true" indexed="true" stored="true" termVectors="true" termPositions="true">
+    <analyzer type="index">
+      <tokenizer class="solr.StandardTokenizerFactory"/>
+      <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/vi_stopwords.txt" />
+      <filter class="solr.LowerCaseFilterFactory"/>
+    </analyzer>
+    <analyzer type="query">
+      <tokenizer class="solr.StandardTokenizerFactory"/>
+      <filter class="solr.SuggestStopFilterFactory" ignoreCase="true" words="lang/vi_stopwords.txt" />
+      <filter class="solr.LowerCaseFilterFactory"/>
+    </analyzer>
+    <similarity class="solr.BM25SimilarityFactory">
+      <float name="k1">1.2</float>
+      <float name="b">0.75</float>
+    </similarity>
+  </fieldType>
+  <fieldType name="text_general_description" class="solr.TextField" multiValued="false" omitNorms="true" indexed="true" stored="true" termVectors="true" termPositions="true">
+    <analyzer type="index">
+      <tokenizer class="solr.StandardTokenizerFactory"/>
+      <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/vi_stopwords.txt" />
+      <filter class="solr.LowerCaseFilterFactory"/>
+    </analyzer>
+    <analyzer type="query">
+      <tokenizer class="solr.StandardTokenizerFactory"/>
+      <filter class="solr.SuggestStopFilterFactory" ignoreCase="true" words="lang/vi_stopwords.txt" />
+      <filter class="solr.LowerCaseFilterFactory"/>
+    </analyzer>
+    <similarity class="solr.BM25SimilarityFactory">
+      <float name="k1">1.2</float>
+      <float name="b">0.75</float>
+    </similarity>
+  </fieldType>
+  <fieldType name="text_general_content" class="solr.TextField" multiValued="false" omitNorms="true" indexed="true" stored="true" termVectors="true" termPositions="true">
+    <analyzer type="index">
+      <tokenizer class="solr.StandardTokenizerFactory"/>
+      <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/vi_stopwords.txt" />
+      <filter class="solr.LowerCaseFilterFactory"/>
+    </analyzer>
+    <analyzer type="query">
+      <tokenizer class="solr.StandardTokenizerFactory"/>
+      <filter class="solr.SuggestStopFilterFactory" ignoreCase="true" words="lang/vi_stopwords.txt" />
+      <filter class="solr.LowerCaseFilterFactory"/>
+    </analyzer>
+    <similarity class="solr.BM25SimilarityFactory">
+      <float name="k1">1.2</float>
+      <float name="b">0.75</float>
+    </similarity>
+  </fieldType>
+  <fieldType name="multi_text_general" class="solr.TextField" multiValued="true" positionIncrementGap="100">
+    <analyzer type="index">
+      <tokenizer class="solr.StandardTokenizerFactory"/>
+      <filter class="solr.LowerCaseFilterFactory"/>
+    </analyzer>
+    <analyzer type="query">
+      <tokenizer class="solr.StandardTokenizerFactory"/>
+      <filter class="solr.LowerCaseFilterFactory"/>
+    </analyzer>
+  </fieldType>
+  <fieldType name="category_text_gerenal" class="solr.EnumFieldType" docValues="true" enumsConfig="enumsConfig.xml" enumName="category"/>
+  <fieldType name="copy_text_general" class="solr.TextField" multiValued="true">
+    <analyzer type="index">
+      <tokenizer class="solr.StandardTokenizerFactory"/>
+      <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/vi_stopwords.txt" />
+      <filter class="solr.LowerCaseFilterFactory"/>
+    </analyzer>
+    <analyzer type="query">
+      <tokenizer class="solr.StandardTokenizerFactory"/>
+      <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/vi_stopwords.txt" />
+      <filter class="solr.LowerCaseFilterFactory"/>
+    </analyzer>
+  </fieldType>
+  <fieldType name="string" class="solr.StrField" sortMissingLast="true" docValues="true" />
+  <fieldType name="boolean" class="solr.BoolField" sortMissingLast="true"/>
+  <fieldType name="booleans" class="solr.BoolField" sortMissingLast="true" multiValued="true"/>
+  <fieldType name="pdates" class="solr.DatePointField" docValues="true" multiValued="true"/>
+  <fieldType name="strings" class="solr.StrField" sortMissingLast="true" multiValued="true" docValues="true" />
+
+  <!--
+    Numeric field types that index values using KD-trees.
+    Point fields don't support FieldCache, so they must have docValues="true" if needed for sorting, faceting, functions, etc.
+  -->
+  <fieldType name="pint" class="solr.IntPointField" docValues="true"/>
+  <fieldType name="pfloat" class="solr.FloatPointField" docValues="true"/>
+  <fieldType name="plong" class="solr.LongPointField" docValues="true"/>
+  <fieldType name="pdouble" class="solr.DoublePointField" docValues="true"/>
+
+  <fieldType name="pints" class="solr.IntPointField" docValues="true" multiValued="true"/>
+  <fieldType name="pfloats" class="solr.FloatPointField" docValues="true" multiValued="true"/>
+  <fieldType name="plongs" class="solr.LongPointField" docValues="true" multiValued="true"/>
+  <fieldType name="pdoubles" class="solr.DoublePointField" docValues="true" multiValued="true"/>
+  <fieldType name="random" class="solr.RandomSortField" indexed="true"/>
+
+
+  <field name="_version_" type="plong" indexed="false" stored="false"/>
+  <uniqueKey>id</uniqueKey>
+  <field name="id" type="string" indexed="true" stored="true" required="true" multiValued="false" />
+  <field name="title_decription_content" type="text_general_description" indexed="true" stored="true"/>
+  <field name="decription" type="text_general_description"/>
+  <field name="title" type="text_general_title"/>
+  <field name="content" type="text_general_content" multiValued="true"/>
+  <field name="post_time" type="string" />
+  <field name="date" type="pdate" />
+  <field name="author" type="multi_text_general" indexed="true" stored="true" termVectors="true" termPositions="true"/>
+  <field name="topic" type="multi_text_general" indexed="true" stored="true"/>
+  <field name="link_img" type="string"/>
+  <field name="link_post" type="string"/>
+  
+</schema>
