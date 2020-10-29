@@ -18,4 +18,4 @@ B1: cd ./TKTD/frontend<br/>
 B2: npm start<br/>
 
 ### Tạo core collection
-bin/solr create -c <name> -d <path to conf folder>
+bin/solr create -c \<name\> -d \<path to conf folder\>
